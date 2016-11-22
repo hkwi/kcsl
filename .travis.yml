@@ -1,0 +1,9 @@
+language: python
+python:
+- 3.5
+install:
+- pip install -r requirements.txt
+- pip install git+https://github.com/hkwi/pdf-table-extract.git@py3
+script: nosetests
+after_success:
+- "./auto.sh"
