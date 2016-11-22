@@ -47,3 +47,5 @@ layout: home
 - 青陽東養護 青陽須磨支援 垂水養護 青陽西養護 市立盲 友生支援
 - [iCalendarファイル](8.ics)
 
+# プログラム
+データは自動更新されています。興味のあるかたは是非[プログラム](https://github.com/hkwi/kcsl/)もご覧ください。バグ報告も issue tracker をご利用ください。
