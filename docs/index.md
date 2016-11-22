@@ -5,6 +5,8 @@
 layout: home
 ---
 
+[神戸市「献立表」のオープンデータ](http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/kondate_shiyousyokuhin.html)を iCalendar ファイルに変換しています。現在のところ献立のみ登録されています。
+
 第1地区
 
 - 本庄 本山南 福池 魚崎 住吉 御影 西灘 稗田 向洋 六甲アイランド 上筒井 宮本 灘 六甲 渦が森 本山第三 東灘
