@@ -10,6 +10,7 @@ import requests
 import rdflib
 import pdftableextract as pte
 import pical
+from email.utils import parsedate
 from urllib.request import urlopen
 from urllib.parse import urlparse
 from rdflib.namespace import *
@@ -25,6 +26,8 @@ def holidays():
 				m = re.match(r"(\d{4})/(\d+)/(\d+)", c)
 				if m:
 					_holidays.add(datetime.date(*[int(s) for s in m.groups()]))
+	for i in range(22, 31):
+		_holidays.add(datetime.date(2016, 12, i))
 	for i in range(1, 11):
 		_holidays.add(datetime.date(2017, 1, i))
 	
@@ -99,27 +102,31 @@ def proc(url, **kwargs):
 	rec = "docs/record.ttl"
 	download(url, history=rec)
 	with _history(rec) as g:
+		tm = g.value(rdflib.URIRef(url), NS1["last-modified"])
+		if tm:
+			tm = datetime.datetime(*parsedate(tm.value)[:6])
+		
+		assert tm
+		
 		out = Fs(re.sub("\.pdf$", ".csv", url))
 		if not os.path.exists(out.local):
 			with open(out.local, "w", encoding="UTF-8") as w:
 				csv.writer(w).writerows(
 					pte.table_to_list(
 						pte.process_page(Fs(url).local, "1", whitespace="raw", pad=1), 1)[1])
-			
-			g.add((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(out.remote)))
+		
+		g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(out.remote)))
 		
 		month,grp = re.match("(\d+)-(.*).pdf", os.path.basename(Fs(url).local)).groups()
 		
 		n = datetime.datetime.now()
+		if tm:
+			n = tm
+		
 		if int(month) + 6 < n.month:
 			s = datetime.date(n.year+1, int(month), 1)
 		else:
 			s = datetime.date(n.year, int(month), 1)
-		
-		# fixup
-		e = None
-		if s == datetime.date(2016, 12, 1):
-			e = datetime.date(2016, 12, 22)
 		
 		days = []
 		for i in range(31):
@@ -130,7 +137,6 @@ def proc(url, **kwargs):
 			if o.year == s.year and o.month == s.month and o.weekday() < 5 and o not in holidays():
 				days.append(o)
 		
-
 		rs = [r for r in csv.reader(open(out.local, encoding="UTF-8"))]
 		menus = []
 		slot = None
@@ -191,6 +197,8 @@ def proc(url, **kwargs):
 				r.children.append(ev)
 			
 			ev.properties = []
+			ev.properties.append(("UID", "%s@%s" % (d.isoformat(), grp), []))
+			ev.properties.append(("DTSTAMP", tm, []))
 			ev.properties.append(("DTSTART", d, [("VALUE",["DATE"])]))
 			ev.properties.append(("SUMMARY", ",".join(m), []))
 			ev.properties.append(("DESCRIPTION", "\n".join(m), []))

@@ -4,7 +4,8 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-1_3.pdf> ns1:last-modified "Wed, 21 Dec 2016 02:27:36 GMT" ;
+<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-1_3.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-1_3.csv> ;
+    ns1:last-modified "Wed, 21 Dec 2016 02:27:36 GMT" ;
     ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-1_3.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-2_6.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-2_6.csv> ;
