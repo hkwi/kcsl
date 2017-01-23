@@ -25,6 +25,9 @@ def holidays():
 				m = re.match(r"(\d{4})/(\d+)/(\d+)", c)
 				if m:
 					_holidays.add(datetime.date(*[int(s) for s in m.groups()]))
+	for i in range(1, 11):
+		_holidays.add(datetime.date(2017, 1, i))
+	
 	return _holidays
 
 def main():
@@ -42,12 +45,10 @@ def _history(filename):
 	g = rdflib.Graph()
 	if os.path.exists(filename):
 		g.load(filename, format="turtle")
-	try:
-		yield g
-	finally:
-		if filename:
-			with open(filename, "wb") as dst:
-				g.serialize(destination=dst, format="turtle")
+	yield g
+	if filename:
+		with open(filename, "wb") as dst:
+			g.serialize(destination=dst, format="turtle")
 
 class Fs(object):
 	def __init__(self, url):
@@ -80,9 +81,8 @@ def download(url, history=None):
 		if fp is None:
 			fp = requests.get(url)
 		
-		add_mirror = True
-		if os.path.exists(fs.local):
-			add_mirror = False
+		if not fp.ok:
+			return
 		
 		logging.info("downloading %s" % url)
 		os.makedirs(os.path.dirname(fs.local), exist_ok=True)
@@ -90,15 +90,10 @@ def download(url, history=None):
 			for data in fp:
 				w.write(data)
 		
+		g.set((rdflib.URIRef(url), NS1["mirror"], rdflib.URIRef(fs.remote)))
 		lm = fp.headers.get("last-modified")
-		if add_mirror:
-			g.add((rdflib.URIRef(url), NS1["mirror"], rdflib.URIRef(fs.remote)))
 		if lm:
-			S = rdflib.URIRef(url)
-			P = NS1["last-modified"]
-			for o in g.objects(S, P):
-				g.remove((S, P, o))
-			g.add((S, P, rdflib.Literal(lm)))
+			g.set((rdflib.URIRef(url), NS1["last-modified"], rdflib.Literal(lm)))
 
 def proc(url, **kwargs):
 	rec = "docs/record.ttl"
@@ -140,28 +135,41 @@ def proc(url, **kwargs):
 		menus = []
 		slot = None
 		mask = None
+		skip_in_cell = 0
 		for i,r in enumerate(rs):
 			for j,c in enumerate(r):
-				if c.strip().startswith("こんだて"):
+				if c.strip().startswith("こんだて") or "\nこんだて" in c:
 					if slot:
 						menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 					slot = {}
 					mask = set()
+					skip_in_cell = 0
+					if not c.strip().startswith("こんだて"):
+						for cr in c.split("\n"):
+							skip_in_cell += 1
+							if cr.startswith("こんだて"):
+								break
 				elif re.sub("[\s　]", "", c).strip().startswith("おかず"):
 					if slot:
 						menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 					slot = None
 				elif slot is not None:
 					content = re.sub("[\s　]", "", c)
-					if s == datetime.date(2016,12,1):
-						if "エネルギー" in content:
-							mask.add(j)
-						elif "地区１２月１４日" in content:
+					if "エネルギー" in content:
+						mask.add(j)
+					elif "お知らせ" in content:
+						mask.add(j)
+					elif s == datetime.date(2016,12,1):
+						if "地区１２月１４日" in content:
 							mask.add(j)
 						elif "\u202c" in content:
 							mask.add(j)
+					
 					if content:
 						ts = [re.sub("[\s　]","",u).strip() for u in c.split("\n")]
+						if skip_in_cell:
+							ts = ts[skip_in_cell:]
+						
 						if j in slot:
 							slot[j] += [t for t in ts if t]
 						else:
@@ -169,7 +177,7 @@ def proc(url, **kwargs):
 		if slot:
 			menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 		
-		assert len(days) == len(menus)
+		assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
 		
 		r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
 		for d,m in zip(days, menus):
