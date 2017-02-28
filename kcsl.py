@@ -30,6 +30,8 @@ def holidays():
 		_holidays.add(datetime.date(2016, 12, i))
 	for i in range(1, 11):
 		_holidays.add(datetime.date(2017, 1, i))
+	for i in range(22, 32):
+		_holidays.add(datetime.date(2017, 3, i))
 	
 	return _holidays
 
@@ -131,9 +133,6 @@ def proc(url, **kwargs):
 		days = []
 		for i in range(31):
 			o = s + datetime.timedelta(days=i)
-			if e and o >= e:
-				break
-			
 			if o.year == s.year and o.month == s.month and o.weekday() < 5 and o not in holidays():
 				days.append(o)
 		
@@ -161,6 +160,11 @@ def proc(url, **kwargs):
 					slot = None
 				elif slot is not None:
 					content = re.sub("[\s　]", "", c)
+					try:
+						content.encode("Shift_JIS").decode("Shift_JIS")
+					except:
+						mask.add(j)
+					
 					if "エネルギー" in content:
 						mask.add(j)
 					elif "お知らせ" in content:
@@ -183,6 +187,8 @@ def proc(url, **kwargs):
 		if slot:
 			menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 		
+		for m in menus:
+			print(m)
 		assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
 		
 		r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
