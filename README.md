@@ -2,6 +2,10 @@
 
 [最新版](https://hkwi.github.io/kcsl/)を取得できます。PDF からのデータ抽出で計算量が重すぎるので最新版の生成は Travis では行っておらず、リモートのマシンで行っています。
 
+```
+python3 -m kcsl
+```
+
 [![Build Status](https://travis-ci.org/hkwi/kcsl.svg?branch=master)](https://travis-ci.org/hkwi/kcsl) 
 
 # License
