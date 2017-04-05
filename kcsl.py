@@ -23,7 +23,7 @@ def holidays():
 		fp = urlopen("http://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv")
 		for r in csv.reader(io.TextIOWrapper(fp, encoding="CP932")):
 			for c in r:
-				m = re.match(r"(\d{4})/(\d+)/(\d+)", c)
+				m = re.match(r"(\d{4})-(\d+)-(\d+)", c)
 				if m:
 					_holidays.add(datetime.date(*[int(s) for s in m.groups()]))
 	for i in range(22, 31):
