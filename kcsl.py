@@ -188,6 +188,8 @@ def proc(url, **kwargs):
 		if slot:
 			menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 		
+		menus = [m for m in menus if not re.match(r"^[\(\)（）]+$", "".join(m))]
+		
 		for m in menus:
 			print(m)
 		assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
