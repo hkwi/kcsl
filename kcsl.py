@@ -10,6 +10,7 @@ import requests
 import rdflib
 import pdftableextract as pte
 import pical
+import yaml
 from email.utils import parsedate
 from urllib.request import urlopen
 from urllib.parse import urlparse
@@ -59,6 +60,10 @@ def _history(filename):
 class Fs(object):
 	def __init__(self, url):
 		self.url = url
+		m = re.match("(\d+)-(.*).pdf", os.path.basename(self.local))
+		if m:
+			month, self.group = m.groups()
+			self.month = int(month)
 	
 	@property
 	def path(self):
@@ -72,6 +77,7 @@ class Fs(object):
 	@property
 	def remote(self):
 		return "http://hkwi.github.com/kcsl/" + self.path
+
 
 def download(url, history=None):
 	fs = Fs(url)
@@ -101,99 +107,105 @@ def download(url, history=None):
 		if lm:
 			g.set((rdflib.URIRef(url), NS1["last-modified"], rdflib.Literal(lm)))
 
+def auto_csv(url, g):
+	out = Fs(re.sub("\.pdf$", ".csv", url))
+	if not os.path.exists(out.local):
+		with open(out.local, "w", encoding="UTF-8") as w:
+			csv.writer(w).writerows(
+				pte.table_to_list(
+					pte.process_page(Fs(url).local, "1", whitespace="raw", pad=1), 1)[1])
+	
+	g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(out.remote)))
+	
+	rs = [r for r in csv.reader(open(out.local, encoding="UTF-8"))]
+	menus = []
+	slot = None
+	mask = None
+	skip_in_cell = 0
+	for i,r in enumerate(rs):
+		for j,c in enumerate(r):
+			if c.strip().startswith("こんだて") or "\nこんだて" in c:
+				if slot:
+					menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
+				slot = {}
+				mask = set()
+				skip_in_cell = 0
+				if not c.strip().startswith("こんだて"):
+					for cr in c.split("\n"):
+						skip_in_cell += 1
+						if cr.startswith("こんだて"):
+							break
+			elif re.sub("[\s　]", "", c).strip().startswith("おかず"):
+				if slot:
+					menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
+				slot = None
+			elif slot is not None:
+				content = re.sub("[\s　]", "", c)
+				try:
+					content.encode("Shift_JIS").decode("Shift_JIS")
+				except:
+					mask.add(j)
+				
+				if "エネルギー" in content:
+					mask.add(j)
+				elif "お知らせ" in content:
+					mask.add(j)
+				elif Fs(url).month == datetime.date(2016,12,1):
+					if "地区１２月１４日" in content:
+						mask.add(j)
+					elif "\u202c" in content:
+						mask.add(j)
+				
+				if content:
+					ts = [re.sub("[\s　]","",u).strip() for u in c.split("\n")]
+					if skip_in_cell:
+						ts = ts[skip_in_cell:]
+					
+					if j in slot:
+						slot[j] += [t for t in ts if t]
+					else:
+						slot[j] = [t for t in ts if t]
+	if slot:
+		menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
+	
+	menus = [m for m in menus if not re.match(r"^[\(\)（）]+$", "".join(m))]
+	print(yaml.dump(menus, allow_unicode=True))
+	return menus
+
 def proc(url, **kwargs):
 	rec = "docs/record.ttl"
 	download(url, history=rec)
 	with _history(rec) as g:
-		tm = g.value(rdflib.URIRef(url), NS1["last-modified"])
-		if tm:
-			tm = datetime.datetime(*parsedate(tm.value)[:6])
+		target = Fs(url)
+		tm_g = g.value(rdflib.URIRef(url), NS1["last-modified"])
+		if tm_g:
+			tm = datetime.datetime(*parsedate(tm_g.value)[:6])
 		
-		assert tm
-		
-		out = Fs(re.sub("\.pdf$", ".csv", url))
-		if not os.path.exists(out.local):
-			with open(out.local, "w", encoding="UTF-8") as w:
-				csv.writer(w).writerows(
-					pte.table_to_list(
-						pte.process_page(Fs(url).local, "1", whitespace="raw", pad=1), 1)[1])
-		
-		g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(out.remote)))
-		
-		month,grp = re.match("(\d+)-(.*).pdf", os.path.basename(Fs(url).local)).groups()
-		
-		n = datetime.datetime.now()
-		if tm:
-			n = tm
-		
-		if int(month) + 6 < n.month:
-			s = datetime.date(n.year+1, int(month), 1)
+		if target.month + 6 < tm.month:
+			head = datetime.date(tm.year+1, target.month, 1)
 		else:
-			s = datetime.date(n.year, int(month), 1)
+			head = datetime.date(tm.year, target.month, 1)
+#		out = Fs(re.sub("\.pdf$", "_man.yml", url))
+#		if not os.path.exists(out.local):
 		
 		days = []
 		for i in range(31):
-			o = s + datetime.timedelta(days=i)
-			if o.year == s.year and o.month == s.month and o.weekday() < 5 and o not in holidays():
+			o = head + datetime.timedelta(days=i)
+			if o.year == head.year and o.month == head.month and o.weekday() < 5 and o not in holidays():
 				days.append(o)
 		
-		rs = [r for r in csv.reader(open(out.local, encoding="UTF-8"))]
-		menus = []
-		slot = None
-		mask = None
-		skip_in_cell = 0
-		for i,r in enumerate(rs):
-			for j,c in enumerate(r):
-				if c.strip().startswith("こんだて") or "\nこんだて" in c:
-					if slot:
-						menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
-					slot = {}
-					mask = set()
-					skip_in_cell = 0
-					if not c.strip().startswith("こんだて"):
-						for cr in c.split("\n"):
-							skip_in_cell += 1
-							if cr.startswith("こんだて"):
-								break
-				elif re.sub("[\s　]", "", c).strip().startswith("おかず"):
-					if slot:
-						menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
-					slot = None
-				elif slot is not None:
-					content = re.sub("[\s　]", "", c)
-					try:
-						content.encode("Shift_JIS").decode("Shift_JIS")
-					except:
-						mask.add(j)
-					
-					if "エネルギー" in content:
-						mask.add(j)
-					elif "お知らせ" in content:
-						mask.add(j)
-					elif s == datetime.date(2016,12,1):
-						if "地区１２月１４日" in content:
-							mask.add(j)
-						elif "\u202c" in content:
-							mask.add(j)
-					
-					if content:
-						ts = [re.sub("[\s　]","",u).strip() for u in c.split("\n")]
-						if skip_in_cell:
-							ts = ts[skip_in_cell:]
-						
-						if j in slot:
-							slot[j] += [t for t in ts if t]
-						else:
-							slot[j] = [t for t in ts if t]
-		if slot:
-			menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
+		try:
+			menus = auto_csv(url, g)
+			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
+		except AssertionError:
+			# hand-crafted yaml
+			out = Fs(re.sub("\.pdf$", ".yml", url))
+			if not os.path.exists(out.local):
+				raise
+			menus = yaml.load(open(out.local))
+			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
 		
-		menus = [m for m in menus if not re.match(r"^[\(\)（）]+$", "".join(m))]
-		
-		for m in menus:
-			print(m)
-		assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
-		
+		grp = target.group
 		r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
 		for d,m in zip(days, menus):
 			ev = None

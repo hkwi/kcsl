@@ -172,3 +172,27 @@
     ns1:last-modified "Mon, 24 Apr 2017 00:42:24 GMT" ;
     ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/5-8.pdf> .
 
+<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-1_3.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-1_3.csv> ;
+    ns1:last-modified "Fri, 19 May 2017 01:29:03 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-1_3.pdf> .
+
+<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-2_6.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-2_6.csv> ;
+    ns1:last-modified "Fri, 19 May 2017 01:29:03 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-2_6.pdf> .
+
+<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-4.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-4.csv> ;
+    ns1:last-modified "Fri, 19 May 2017 01:29:02 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-4.pdf> .
+
+<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-5.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-5.csv> ;
+    ns1:last-modified "Fri, 19 May 2017 01:29:05 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-5.pdf> .
+
+<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-7.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-7.csv> ;
+    ns1:last-modified "Fri, 19 May 2017 01:29:04 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-7.pdf> .
+
+<http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-8.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-8.csv> ;
+    ns1:last-modified "Fri, 19 May 2017 01:29:06 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/6-8.pdf> .
+
