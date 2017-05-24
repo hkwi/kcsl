@@ -670,8 +670,8 @@ BEGIN:VEVENT
 UID:2017-05-02@2_6
 DTSTAMP:20170424T004223
 DTSTART;VALUE=DATE:20170502
-SUMMARY:ごはん\,おろしハンバーグ\,）\,五色に\,ちまき
-DESCRIPTION:ごはん\nおろしハンバーグ\n）\n五色に\nちまき
+SUMMARY:ごはん\,おろしハンバーグ\,五色に\,ちまき
+DESCRIPTION:ごはん\nおろしハンバーグ\n五色に\nちまき
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-05-08@2_6
@@ -789,8 +789,8 @@ BEGIN:VEVENT
 UID:2017-05-30@2_6
 DTSTAMP:20170424T004223
 DTSTART;VALUE=DATE:20170530
-SUMMARY:ぼっかけどん\,わかさぎのからあげ\,）みそしる
-DESCRIPTION:ぼっかけどん\nわかさぎのからあげ\n）みそしる
+SUMMARY:ぼっかけどん\,わかさぎのからあげ\,みそしる
+DESCRIPTION:ぼっかけどん\nわかさぎのからあげ\nみそしる
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-05-31@2_6

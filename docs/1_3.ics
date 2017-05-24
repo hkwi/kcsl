@@ -747,8 +747,8 @@ BEGIN:VEVENT
 UID:2017-05-22@1_3
 DTSTAMP:20170424T004224
 DTSTART;VALUE=DATE:20170522
-SUMMARY:ごはん\,おろしハンバーグ（\,五色に
-DESCRIPTION:ごはん\nおろしハンバーグ（\n五色に
+SUMMARY:ごはん\,おろしハンバーグ\,五色に
+DESCRIPTION:ごはん\nおろしハンバーグ\n五色に
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-05-23@1_3
@@ -761,8 +761,8 @@ BEGIN:VEVENT
 UID:2017-05-24@1_3
 DTSTAMP:20170424T004224
 DTSTART;VALUE=DATE:20170524
-SUMMARY:ぼっかけどん\,）わかさぎのからあげ\,みそしる
-DESCRIPTION:ぼっかけどん\n）わかさぎのからあげ\nみそしる
+SUMMARY:ぼっかけどん\,わかさぎのからあげ\,みそしる
+DESCRIPTION:ぼっかけどん\nわかさぎのからあげ\nみそしる
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-05-25@1_3
@@ -775,8 +775,8 @@ BEGIN:VEVENT
 UID:2017-05-26@1_3
 DTSTAMP:20170424T004224
 DTSTART;VALUE=DATE:20170526
-SUMMARY:☆季節料理\,☆たけのこごはん\,ますのからあげ\,）かきたまじる
-DESCRIPTION:☆季節料理\n☆たけのこごはん\nますのからあげ\n）かきたまじる
+SUMMARY:☆季節料理\,☆たけのこごはん\,ますのからあげ\,かきたまじる
+DESCRIPTION:☆季節料理\n☆たけのこごはん\nますのからあげ\nかきたまじる
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-05-29@1_3
@@ -796,8 +796,8 @@ BEGIN:VEVENT
 UID:2017-05-31@1_3
 DTSTAMP:20170424T004224
 DTSTART;VALUE=DATE:20170531
-SUMMARY:ごはん\,牛肉のうまに\,）こまつなのにびたし
-DESCRIPTION:ごはん\n牛肉のうまに\n）こまつなのにびたし
+SUMMARY:ごはん\,牛肉のうまに\,こまつなのにびたし
+DESCRIPTION:ごはん\n牛肉のうまに\nこまつなのにびたし
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-06-01@1_3

@@ -705,8 +705,8 @@ BEGIN:VEVENT
 UID:2017-05-12@4
 DTSTAMP:20170424T004222
 DTSTART;VALUE=DATE:20170512
-SUMMARY:パン\,ポークシチュー（\,む\,蒸し野菜（カリフラワー）
-DESCRIPTION:パン\nポークシチュー（\nむ\n蒸し野菜（カリフラワー）
+SUMMARY:パン\,ポークシチュー\,む\,蒸し野菜（カリフラワー）
+DESCRIPTION:パン\nポークシチュー\nむ\n蒸し野菜（カリフラワー）
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-05-15@4
@@ -761,8 +761,8 @@ BEGIN:VEVENT
 UID:2017-05-24@4
 DTSTAMP:20170424T004222
 DTSTART;VALUE=DATE:20170524
-SUMMARY:パン\,）\,チキンカツ\,チンゲンサイとコーンのスープ
-DESCRIPTION:パン\n）\nチキンカツ\nチンゲンサイとコーンのスープ
+SUMMARY:パン\,チキンカツ\,チンゲンサイとコーンのスープ
+DESCRIPTION:パン\nチキンカツ\nチンゲンサイとコーンのスープ
 END:VEVENT
 BEGIN:VEVENT
 UID:2017-05-25@4
