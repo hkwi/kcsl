@@ -35,6 +35,8 @@ def holidays():
 		_holidays.add(datetime.date(2017, 3, i))
 	for i in range(1, 17):
 		_holidays.add(datetime.date(2017, 4, i))
+	for i in range(21, 32):
+		_holidays.add(datetime.date(2017, 7, i))
 	return _holidays
 
 def main():
@@ -124,6 +126,7 @@ def auto_csv(url, g):
 	skip_in_cell = 0
 	for i,r in enumerate(rs):
 		for j,c in enumerate(r):
+			c = c.encode("CP932", "ignore").decode("CP932", "ignore")
 			if c.strip().startswith("こんだて") or "\nこんだて" in c:
 				if slot:
 					menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
@@ -141,10 +144,6 @@ def auto_csv(url, g):
 				slot = None
 			elif slot is not None:
 				content = re.sub("[\s　]", "", c)
-				try:
-					content.encode("Shift_JIS").decode("Shift_JIS")
-				except:
-					mask.add(j)
 				
 				if "エネルギー" in content:
 					mask.add(j)
@@ -155,6 +154,9 @@ def auto_csv(url, g):
 						mask.add(j)
 					elif "\u202c" in content:
 						mask.add(j)
+				
+				if "とんじゃ" in content:
+					print(content)
 				
 				if content:
 					ts = [re.sub("[\s　]","",u).strip() for u in c.split("\n")]
@@ -171,6 +173,8 @@ def auto_csv(url, g):
 	menus = [m for m in menus if not re.match(r"^[\(\)（）]+$", "".join(m))]
 	print(yaml.dump(menus, allow_unicode=True))
 	return menus
+
+gmenus = set()
 
 def proc(url, **kwargs):
 	rec = "docs/record.ttl"
@@ -194,16 +198,17 @@ def proc(url, **kwargs):
 			if o.year == head.year and o.month == head.month and o.weekday() < 5 and o not in holidays():
 				days.append(o)
 		
-		try:
+		yout = Fs(re.sub("\.pdf$", ".yml", url))
+		# hand-crafted yaml
+		if os.path.exists(yout.local):
+			menus = yaml.load(open(yout.local))
+			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
+		else:
 			menus = auto_csv(url, g)
 			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
-		except AssertionError:
-			# hand-crafted yaml
-			out = Fs(re.sub("\.pdf$", ".yml", url))
-			if not os.path.exists(out.local):
-				raise
-			menus = yaml.load(open(out.local))
-			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
+			print(yaml.dump(menus, open(yout.local, "w"), allow_unicode=True))
+			gmenus.update(m)
+			# print(yaml.dump(menus, allow_unicode=True))
 		
 		grp = target.group
 		r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
@@ -232,3 +237,5 @@ def proc(url, **kwargs):
 if __name__ == "__main__":
 	logging.basicConfig(level=logging.DEBUG)
 	main()
+	for m in sorted(gmenus):
+		print(m)
