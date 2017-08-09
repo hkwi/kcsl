@@ -37,6 +37,7 @@ def holidays():
 		_holidays.add(datetime.date(2017, 4, i))
 	for i in range(21, 32):
 		_holidays.add(datetime.date(2017, 7, i))
+	_holidays.add(datetime.date(2017, 9, 1))
 	return _holidays
 
 def main():
@@ -207,8 +208,9 @@ def proc(url, **kwargs):
 			menus = auto_csv(url, g)
 			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
 			print(yaml.dump(menus, open(yout.local, "w"), allow_unicode=True))
-			gmenus.update(m)
-			# print(yaml.dump(menus, allow_unicode=True))
+			for m in menus:
+				gmenus.update(set(m))
+			print(yaml.dump(menus, allow_unicode=True))
 		
 		grp = target.group
 		r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
