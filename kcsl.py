@@ -37,6 +37,8 @@ def holidays():
 		_holidays.add(datetime.date(2017, 4, i))
 	for i in range(21, 32):
 		_holidays.add(datetime.date(2017, 7, i))
+	for i in range(23, 31):
+		_holidays.add(datetime.date(2017, 12, i))
 	_holidays.add(datetime.date(2017, 9, 1))
 	return _holidays
 
@@ -149,6 +151,8 @@ def auto_csv(url, g):
 				if "エネルギー" in content:
 					mask.add(j)
 				elif "お知らせ" in content:
+					mask.add(j)
+				elif "特別支援学校" in content:
 					mask.add(j)
 				elif Fs(url).month == datetime.date(2016,12,1):
 					if "地区１２月１４日" in content:
