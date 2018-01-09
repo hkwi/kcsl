@@ -39,6 +39,8 @@ def holidays():
 		_holidays.add(datetime.date(2017, 7, i))
 	for i in range(23, 31):
 		_holidays.add(datetime.date(2017, 12, i))
+	for i in range(1, 10):
+		_holidays.add(datetime.date(2018, 1, i))
 	_holidays.add(datetime.date(2017, 9, 1))
 	return _holidays
 
