@@ -42,6 +42,7 @@ def holidays():
 	for i in range(1, 10):
 		_holidays.add(datetime.date(2018, 1, i))
 	_holidays.add(datetime.date(2017, 9, 1))
+	_holidays.add(datetime.date(2018, 2,12)) # 振替休日
 	return _holidays
 
 def main():
