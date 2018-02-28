@@ -41,6 +41,8 @@ def holidays():
 		_holidays.add(datetime.date(2017, 12, i))
 	for i in range(1, 10):
 		_holidays.add(datetime.date(2018, 1, i))
+	for i in range(20, 31):
+		_holidays.add(datetime.date(2018, 3, i))
 	_holidays.add(datetime.date(2017, 9, 1))
 	_holidays.add(datetime.date(2018, 2,12)) # 振替休日
 	return _holidays
@@ -65,35 +67,58 @@ def _history(filename):
 		with open(filename, "wb") as dst:
 			g.serialize(destination=dst, format="turtle")
 
-class Fs(object):
-	def __init__(self, url):
+
+def year_for(month, found=None):
+	if found is None:
+		found = datetime.date.today()
+	
+	if month <= found.month + 3:
+		return found.year
+	else:
+		return found.year - 1
+
+assert year_for(1, datetime.date(2017, 2, 1)) == 2017
+assert year_for(2, datetime.date(2017, 2, 1)) == 2017
+assert year_for(3, datetime.date(2017, 2, 1)) == 2017 # 
+assert year_for(11, datetime.date(2016,11, 1)) == 2016
+assert year_for(11, datetime.date(2016,12, 1)) == 2016
+assert year_for(11, datetime.date(2017, 1, 1)) == 2016
+assert year_for(6, datetime.date(2017, 7, 1)) == 2017
+assert year_for(6, datetime.date(2017, 6, 1)) == 2017
+assert year_for(6, datetime.date(2017, 5, 1)) == 2017
+
+class PdfStore(object):
+	def __init__(self, url, base=None):
 		self.url = url
-		m = re.match("(\d+)-(.*).pdf", os.path.basename(self.local))
-		if m:
-			month, self.group = m.groups()
-			self.month = int(month)
+		
+		m = re.match("(\d+)-(.*).pdf", os.path.basename(urlparse(url).path))
+		assert m
+		
+		month, self.group = m.groups()
+		self.month = int(month)
+		
+		if base is None:
+			base = datetime.date.today()
+		
+		self.year = year_for(self.month, base)
 	
-	@property
-	def path(self):
-		pc = urlparse(self.url)
-		return pc.netloc + pc.path
+	def path(self, ext):
+		return "data/{:04d}-{:02d}-{:s}.{:s}".format(self.year, self.month, self.group, ext)
 	
-	@property
-	def local(self):
-		return "docs/" + self.path
+	def local(self, ext):
+		return "docs/" + self.path(ext)
 	
-	@property
-	def remote(self):
-		return "http://hkwi.github.com/kcsl/" + self.path
+	def remote(self, ext):
+		return "http://hkwi.github.com/kcsl/" + self.path(ext)
 
 
 def download(url, history=None):
-	fs = Fs(url)
+	fs = PdfStore(url)
 	with _history(history) as g:
 		lm = g.value(rdflib.URIRef(url), NS1["last-modified"])
 		
 		fp = None
-		if os.path.exists(fs.local) and lm:
+		if os.path.exists(fs.local("pdf")) and lm:
 			fp = requests.get(url, headers={"If-Modified-Since":lm})
 			if fp.status_code == 304: # xxx: not modified
 				return
@@ -105,27 +130,27 @@ def download(url, history=None):
 			return
 		
 		logging.info("downloading %s" % url)
-		os.makedirs(os.path.dirname(fs.local), exist_ok=True)
-		with open(fs.local, "wb") as w:
+		os.makedirs(os.path.dirname(fs.local("pdf")), exist_ok=True)
+		with open(fs.local("pdf"), "wb") as w:
 			for data in fp:
 				w.write(data)
 		
-		g.set((rdflib.URIRef(url), NS1["mirror"], rdflib.URIRef(fs.remote)))
+		g.set((rdflib.URIRef(url), NS1["mirror"], rdflib.URIRef(fs.remote("pdf"))))
 		lm = fp.headers.get("last-modified")
 		if lm:
 			g.set((rdflib.URIRef(url), NS1["last-modified"], rdflib.Literal(lm)))
 
 def auto_csv(url, g):
-	out = Fs(re.sub("\.pdf$", ".csv", url))
-	if not os.path.exists(out.local):
-		with open(out.local, "w", encoding="UTF-8") as w:
+	fs = PdfStore(url)
+	if not os.path.exists(fs.local("csv")):
+		with open(fs.local("csv"), "w", encoding="UTF-8") as w:
 			csv.writer(w).writerows(
 				pte.table_to_list(
-					pte.process_page(Fs(url).local, "1", whitespace="raw", pad=1), 1)[1])
+					pte.process_page(fs.local("pdf"), "1", whitespace="raw"), 1)[1])
 	
-	g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(out.remote)))
+	g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(fs.remote("csv"))))
 	
-	rs = [r for r in csv.reader(open(out.local, encoding="UTF-8"))]
+	rs = [r for r in csv.reader(open(fs.local("csv"), encoding="UTF-8"))]
 	menus = []
 	slot = None
 	mask = None
@@ -157,7 +182,7 @@ def auto_csv(url, g):
 					mask.add(j)
 				elif "特別支援学校" in content:
 					mask.add(j)
-				elif Fs(url).month == datetime.date(2016,12,1):
+				elif PdfStore(url).month == datetime.date(2016,12,1):
 					if "地区１２月１４日" in content:
 						mask.add(j)
 					elif "\u202c" in content:
@@ -188,17 +213,14 @@ def proc(url, **kwargs):
 	rec = "docs/record.ttl"
 	download(url, history=rec)
 	with _history(rec) as g:
-		target = Fs(url)
-		tm_g = g.value(rdflib.URIRef(url), NS1["last-modified"])
-		if tm_g:
-			tm = datetime.datetime(*parsedate(tm_g.value)[:6])
-		
-		if target.month + 6 < tm.month:
-			head = datetime.date(tm.year+1, target.month, 1)
+		lm = g.value(rdflib.URIRef(url), NS1["last-modified"])
+		if lm:
+			tm = datetime.datetime(*parsedate(lm.value)[:6])
+			fs = PdfStore(url, tm)
 		else:
-			head = datetime.date(tm.year, target.month, 1)
-#		out = Fs(re.sub("\.pdf$", "_man.yml", url))
-#		if not os.path.exists(out.local):
+			fs = PdfStore(url)
+		
+		head = datetime.date(fs.year, fs.month, 1)
 		
 		days = []
 		for i in range(31):
@@ -206,20 +228,19 @@ def proc(url, **kwargs):
 			if o.year == head.year and o.month == head.month and o.weekday() < 5 and o not in holidays():
 				days.append(o)
 		
-		yout = Fs(re.sub("\.pdf$", ".yml", url))
 		# hand-crafted yaml
-		if os.path.exists(yout.local):
-			menus = yaml.load(open(yout.local))
-			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
+		if os.path.exists(fs.local("yml")):
+			menus = yaml.load(open(fs.local("yml")))
 		else:
 			menus = auto_csv(url, g)
-			assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
-			print(yaml.dump(menus, open(yout.local, "w"), allow_unicode=True))
+			print(yaml.dump(menus, allow_unicode=True))
+			print(yaml.dump(menus, open(fs.local("yml"), "w"), allow_unicode=True))
 			for m in menus:
 				gmenus.update(set(m))
-			print(yaml.dump(menus, allow_unicode=True))
 		
-		grp = target.group
+		assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
+		
+		grp = fs.group
 		r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
 		for d,m in zip(days, menus):
 			ev = None
