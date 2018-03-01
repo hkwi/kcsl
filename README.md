@@ -8,5 +8,8 @@ python3 -m kcsl
 
 [![Build Status](https://travis-ci.org/hkwi/kcsl.svg?branch=master)](https://travis-ci.org/hkwi/kcsl) 
 
+
+ubuntu では `poppler-utils`, `poppler-data` package もインストールしてください。
+
 # License
 プログラムは Apache 2.0 ライセンス、データは CC-BY ライセンスにします。
