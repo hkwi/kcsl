@@ -6,6 +6,6 @@ before_install:
   - sudo apt-get install -y poppler-utils poppler-data
 install:
   - pip install -r requirements.txt
-script: nosetests
+script: pytest
 after_success:
   - "./auto.sh"
