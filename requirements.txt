@@ -3,3 +3,4 @@ lxml
 pical
 pyyaml
 git+https://github.com/hkwi/pdf-table-extract@py3
+requests
