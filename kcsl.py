@@ -27,6 +27,8 @@ def holidays():
 				m = re.match(r"(\d{4})-(\d+)-(\d+)", c)
 				if m:
 					_holidays.add(datetime.date(*[int(s) for s in m.groups()]))
+	_holidays.add(datetime.date(2016, 11, 3))
+	_holidays.add(datetime.date(2016, 11, 23))
 	for i in range(22, 31):
 		_holidays.add(datetime.date(2016, 12, i))
 	for i in range(1, 11):
@@ -45,6 +47,9 @@ def holidays():
 		_holidays.add(datetime.date(2018, 3, i))
 	_holidays.add(datetime.date(2017, 9, 1))
 	_holidays.add(datetime.date(2018, 2,12)) # 振替休日
+	for i in range(1, 13):
+		_holidays.add(datetime.date(2018, 4, i))
+	_holidays.add(datetime.date(2018, 4, 30))
 	return _holidays
 
 def main():
@@ -140,15 +145,15 @@ def download(url, history=None):
 		if lm:
 			g.set((rdflib.URIRef(url), NS1["last-modified"], rdflib.Literal(lm)))
 
-def auto_csv(url, g):
-	fs = PdfStore(url)
+def auto_csv(url, g, base=None):
+	fs = PdfStore(url, base)
 	if not os.path.exists(fs.local("csv")):
 		with open(fs.local("csv"), "w", encoding="UTF-8") as w:
 			csv.writer(w).writerows(
 				pte.table_to_list(
 					pte.process_page(fs.local("pdf"), "1", whitespace="raw"), 1)[1])
-	
-	g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(fs.remote("csv"))))
+	if g:
+		g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(fs.remote("csv"))))
 	
 	rs = [r for r in csv.reader(open(fs.local("csv"), encoding="UTF-8"))]
 	menus = []
