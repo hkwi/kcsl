@@ -50,6 +50,8 @@ def holidays():
 	for i in range(1, 13):
 		_holidays.add(datetime.date(2018, 4, i))
 	_holidays.add(datetime.date(2018, 4, 30))
+	for i in range(20, 32):
+		_holidays.add(datetime.date(2018, 7, i))
 	return _holidays
 
 def main():
