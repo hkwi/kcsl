@@ -11,6 +11,7 @@ import rdflib
 import pdftableextract as pte
 import pical
 import yaml
+import unicodedata
 from email.utils import parsedate
 from urllib.request import urlopen
 from urllib.parse import urlparse
@@ -52,6 +53,9 @@ def holidays():
 	_holidays.add(datetime.date(2018, 4, 30))
 	for i in range(20, 32):
 		_holidays.add(datetime.date(2018, 7, i))
+	for i in range(1,5):
+		_holidays.add(datetime.date(2018, 9, i))
+	_holidays.add(datetime.date(2018, 9, 24))
 	return _holidays
 
 def main():
@@ -153,7 +157,7 @@ def auto_csv(url, g, base=None):
 		with open(fs.local("csv"), "w", encoding="UTF-8") as w:
 			csv.writer(w).writerows(
 				pte.table_to_list(
-					pte.process_page(fs.local("pdf"), "1", whitespace="raw"), 1)[1])
+					pte.process_page(fs.local("pdf"), "1", whitespace="raw", bitmap_resolution=600), 1)[1])
 	if g:
 		g.set((rdflib.URIRef(url), NS1["csv"], rdflib.URIRef(fs.remote("csv"))))
 	
@@ -164,19 +168,20 @@ def auto_csv(url, g, base=None):
 	skip_in_cell = 0
 	for i,r in enumerate(rs):
 		for j,c in enumerate(r):
+			c = c.replace("\u20dd", "\u25cb")
 			c = c.encode("CP932", "ignore").decode("CP932", "ignore")
-			if c.strip().startswith("こんだて") or "\nこんだて" in c:
+			c = re.sub("[ \t　]", "", c).strip()
+			lines = [l.strip() for l in c.split() if l.strip()]
+			if "こんだて" in lines:
 				if slot:
 					menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 				slot = {}
 				mask = set()
-				skip_in_cell = 0
-				if not c.strip().startswith("こんだて"):
-					for cr in c.split("\n"):
-						skip_in_cell += 1
-						if cr.startswith("こんだて"):
-							break
-			elif re.sub("[\s　]", "", c).strip().startswith("おかず"):
+				try:
+					skip_in_cell = lines.index("こんだて")
+				except ValueError:
+					skip_in_cell = 0
+			elif "おかず" in lines:
 				if slot:
 					menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 				slot = None
@@ -198,20 +203,23 @@ def auto_csv(url, g, base=None):
 				if "とんじゃ" in content:
 					print(content)
 				
+				if "です。" in c:
+					mask.add(j)
+				
 				if content:
 					ts = [re.sub("[\s　]","",u).strip() for u in c.split("\n")]
 					if skip_in_cell:
 						ts = ts[skip_in_cell:]
 					
+					ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 					if j in slot:
-						slot[j] += [t for t in ts if t]
+						slot[j] += [t for t in ts if t and t not in ALPHABET]
 					else:
-						slot[j] = [t for t in ts if t]
+						slot[j] = [t for t in ts if t and t not in ALPHABET]
 	if slot:
 		menus += [slot[k] for k in sorted(slot.keys()) if k not in mask]
 	
 	menus = [m for m in menus if not re.match(r"^[\(\)（）]+$", "".join(m))]
-	print(yaml.dump(menus, allow_unicode=True))
 	return menus
 
 gmenus = set()
