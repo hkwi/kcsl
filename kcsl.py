@@ -56,6 +56,7 @@ def holidays():
 	for i in range(1,5):
 		_holidays.add(datetime.date(2018, 9, i))
 	_holidays.add(datetime.date(2018, 9, 24))
+	_holidays.add(datetime.date(2018, 11, 23))
 	for i in range(22, 32):
 		_holidays.add(datetime.date(2018, 12, i))
 	return _holidays
@@ -67,8 +68,10 @@ def main():
 	for anchor in r.xpath('//*[@id="contents"]//a'):
 		href = anchor.get("href")
 		if re.search(r"/\d+[^/]+$", href): # 献立表に違いない
-			month = re.search("(\d+)月", list(anchor.xpath("preceding::h2/text()"))[-1]).group(1)
-			proc(href, anchor_text=anchor.text, month=int(month))
+			month_match = re.search("(\d+)月", list(anchor.xpath("preceding::h2/text()"))[-1])
+			if month_match:
+				month = month_match.group(1)
+				proc(href, anchor_text=anchor.text, month=int(month))
 
 @contextlib.contextmanager
 def _history(filename):
