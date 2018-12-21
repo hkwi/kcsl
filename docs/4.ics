@@ -2362,8 +2362,8 @@ BEGIN:VEVENT
 UID:2018-07-13@4
 DTSTAMP:20180618T084336
 DTSTART;VALUE=DATE:20180713
-SUMMARY:マカロニのトマトに\,ポパイソテー\,ミニゼリー(アセロラ)
-DESCRIPTION:マカロニのトマトに\nポパイソテー\nミニゼリー(アセロラ)
+SUMMARY:パン\,マカロニのトマトに\,ポパイソテー\,ミニゼリー(アセロラ)
+DESCRIPTION:パン\nマカロニのトマトに\nポパイソテー\nミニゼリー(アセロラ)
 END:VEVENT
 BEGIN:VEVENT
 UID:2018-07-17@4
@@ -2474,8 +2474,8 @@ BEGIN:VEVENT
 UID:2018-09-25@4
 DTSTAMP:20180719T005845
 DTSTART;VALUE=DATE:20180925
-SUMMARY:☆季節料理\,シーフードカレー\,☆とうもろこし
-DESCRIPTION:☆季節料理\nシーフードカレー\n☆とうもろこし
+SUMMARY:☆季節料理\,ごはん,シーフードカレー\,☆とうもろこし
+DESCRIPTION:☆季節料理\nごはん\nシーフードカレー\n☆とうもろこし
 END:VEVENT
 BEGIN:VEVENT
 UID:2018-09-26@4
