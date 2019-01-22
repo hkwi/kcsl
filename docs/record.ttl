@@ -5,32 +5,32 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-1_3.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-1_3.csv> ;
-    ns1:last-modified "Thu, 21 Dec 2017 05:48:52 GMT" ;
-    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-1_3.pdf> .
+    ns1:last-modified "Tue, 18 Dec 2018 00:19:44 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2019-01-1_3.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-2_6.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-2_6.csv> ;
-    ns1:last-modified "Thu, 21 Dec 2017 05:49:31 GMT" ;
-    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-2_6.pdf> .
+    ns1:last-modified "Mon, 17 Dec 2018 02:48:32 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2019-01-2_6.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-4.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-4.csv> ;
-    ns1:last-modified "Thu, 21 Dec 2017 05:49:54 GMT" ;
-    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-4.pdf> .
+    ns1:last-modified "Mon, 17 Dec 2018 02:48:48 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2019-01-4.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-5.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-5.csv> ;
-    ns1:last-modified "Thu, 21 Dec 2017 05:50:42 GMT" ;
-    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-5.pdf> .
+    ns1:last-modified "Mon, 17 Dec 2018 02:49:04 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2019-01-5.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-7.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-7.csv> ;
-    ns1:last-modified "Thu, 21 Dec 2017 05:51:08 GMT" ;
-    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-7.pdf> .
+    ns1:last-modified "Mon, 17 Dec 2018 02:49:19 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2019-01-7.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-8.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-8.csv> ;
-    ns1:last-modified "Thu, 21 Dec 2017 05:51:57 GMT" ;
-    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-8.pdf> .
+    ns1:last-modified "Mon, 17 Dec 2018 02:49:33 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2019-01-8.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-9.pdf> ns1:csv <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-9.csv> ;
-    ns1:last-modified "Thu, 21 Dec 2017 05:52:35 GMT" ;
-    ns1:mirror <http://hkwi.github.com/kcsl/www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/1-9.pdf> .
+    ns1:last-modified "Mon, 17 Dec 2018 02:49:53 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2019-01-9.pdf> .
 
 <http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/img/10-1_3.pdf> ns1:csv <http://hkwi.github.com/kcsl/data/2018-10-1_3.csv> ;
     ns1:last-modified "Wed, 19 Sep 2018 00:15:03 GMT" ;

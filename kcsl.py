@@ -59,6 +59,9 @@ def holidays():
 	_holidays.add(datetime.date(2018, 11, 23))
 	for i in range(22, 32):
 		_holidays.add(datetime.date(2018, 12, i))
+	for i in range(1, 8):
+		_holidays.add(datetime.date(2019, 1, i))
+	_holidays.add(datetime.date(2019, 1, 14))
 	return _holidays
 
 def main():
@@ -88,10 +91,12 @@ def year_for(month, found=None):
 	if found is None:
 		found = datetime.date.today()
 	
-	if month <= found.month + 3:
-		return found.year
-	else:
+	if found.month > 9 and month < 3:
+		return found.year + 1
+	elif found.month < 3 and month > 9:
 		return found.year - 1
+	else:
+		return found.year
 
 assert year_for(1, datetime.date(2017, 2, 1)) == 2017
 assert year_for(2, datetime.date(2017, 2, 1)) == 2017
@@ -102,6 +107,8 @@ assert year_for(11, datetime.date(2017, 1, 1)) == 2016
 assert year_for(6, datetime.date(2017, 7, 1)) == 2017
 assert year_for(6, datetime.date(2017, 6, 1)) == 2017
 assert year_for(6, datetime.date(2017, 5, 1)) == 2017
+assert year_for(1, datetime.date(2018, 12, 1)) == 2019
+assert year_for(12, datetime.date(2019, 1, 1)) == 2018
 
 class PdfStore(object):
 	def __init__(self, url, base=None):
