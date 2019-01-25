@@ -305,12 +305,14 @@ def yaml_to_ics(yaml_path, ics_path, tm=None):
 		
 		ev = None
 		for c in r.children:
-			uid = "%s@%s" % (d.isoformat(), ics_grp)
 			if d == c["DTSTART"]:
-				if uid == c["UID"]:
+				f = re.match("(\d{4})-(\d{2})-(\d{2})@(.+)", c["UID"])
+				y,m,d,g = f.groups()
+				
+				if y==year and m==month and g==yaml_grp:
 					ev = c
 					lut = {p[0]:p[1] for p in props}
-					if ev.get("SUMMARY") != lut["SUMMARY"] or ev.get("DESCRIPTION") != lut["DESCRIPTION"]:
+					if ev["SUMMARY"] != lut["SUMMARY"] or ev["DESCRIPTION"] != lut["DESCRIPTION"]:
 						ev.properties = props
 				else:
 					ev = "skip"
@@ -335,15 +337,15 @@ def ics_from_yaml(ics_path, tm=None):
 	yaml_src = set()
 	r = pical.parse(open(ics_path, "rb"))[0]
 	for c in r.children:
-		print(c["UID"])
 		f = re.match("(\d{4})-(\d{2})-(\d{2})@(.+)", c["UID"])
 		y,m,d,g = f.groups()
 		yaml_src.add("docs/data/%s-%s-%s.yml" % (y,m,g))
 	
-	print(yaml_src)
+	print(sorted(yaml_src))
 	
 	for yaml_path in yaml_src:
-		yaml_to_ics(yaml_path, ics_path, tm)
+		if yaml_path.endswith("2017-01-8.yml"):
+			yaml_to_ics(yaml_path, ics_path, tm)
 
 
 if __name__ == "__main__":
@@ -355,7 +357,6 @@ if __name__ == "__main__":
 	if argv.icss:
 		# ics_from_yaml(ics_path, yaml_path, tm=None)
 		for ics in argv.icss:
-			print(ics)
 			ics_from_yaml(ics)
 	else:
 		main()
