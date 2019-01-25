@@ -1,3 +1,4 @@
+import argparse
 import csv
 import contextlib
 import datetime
@@ -19,49 +20,53 @@ from rdflib.namespace import *
 
 NS1 = rdflib.Namespace("http://hkwi.github.io/kcsl/terms#")
 
+
 _holidays = set()
 def holidays():
-	if not _holidays:
-		fp = urlopen("http://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv")
-		for r in csv.reader(io.TextIOWrapper(fp, encoding="CP932")):
-			for c in r:
-				m = re.match(r"(\d{4})-(\d+)-(\d+)", c)
-				if m:
-					_holidays.add(datetime.date(*[int(s) for s in m.groups()]))
-	_holidays.add(datetime.date(2016, 11, 3))
-	_holidays.add(datetime.date(2016, 11, 23))
-	for i in range(22, 31):
-		_holidays.add(datetime.date(2016, 12, i))
-	for i in range(1, 11):
-		_holidays.add(datetime.date(2017, 1, i))
-	for i in range(22, 32):
-		_holidays.add(datetime.date(2017, 3, i))
-	for i in range(1, 17):
-		_holidays.add(datetime.date(2017, 4, i))
-	for i in range(21, 32):
-		_holidays.add(datetime.date(2017, 7, i))
-	for i in range(23, 31):
-		_holidays.add(datetime.date(2017, 12, i))
-	for i in range(1, 10):
-		_holidays.add(datetime.date(2018, 1, i))
-	for i in range(20, 31):
-		_holidays.add(datetime.date(2018, 3, i))
-	_holidays.add(datetime.date(2017, 9, 1))
-	_holidays.add(datetime.date(2018, 2,12)) # 振替休日
-	for i in range(1, 13):
-		_holidays.add(datetime.date(2018, 4, i))
-	_holidays.add(datetime.date(2018, 4, 30))
-	for i in range(20, 32):
-		_holidays.add(datetime.date(2018, 7, i))
-	for i in range(1,5):
-		_holidays.add(datetime.date(2018, 9, i))
-	_holidays.add(datetime.date(2018, 9, 24))
-	_holidays.add(datetime.date(2018, 11, 23))
-	for i in range(22, 32):
-		_holidays.add(datetime.date(2018, 12, i))
-	for i in range(1, 8):
-		_holidays.add(datetime.date(2019, 1, i))
-	_holidays.add(datetime.date(2019, 1, 14))
+	_ = "to"
+	info = [
+		(2016, 11,  3),
+		(2016, 11, 23),
+		(2016, 12, 22, _, 31),
+		(2017,  1,  1, _, 10),
+		(2017,  3, 20),
+		(2017,  3, 22, _, 31),
+		(2017,  4,  1, _, 16),
+		(2017,  5,  3, _,  7),
+		(2017,  7, 17),
+		(2017,  7, 21, _, 31),
+		(2017,  9, 1),
+		(2017,  9, 18),
+		(2017, 10,  9),
+		(2017, 11,  3),
+		(2017, 11, 23),
+		(2017, 12, 23, _, 31),
+		(2018,  1,  1, _,  9),
+		(2018,  3, 20, _, 31),
+		(2018,  2, 12), # 振替休日
+		(2018,  4,  1, _, 12),
+		(2018,  4, 30),
+		(2018,  5,  3, _,  6),
+		(2018,  7, 16),
+		(2018,  7, 20, _, 31),
+		(2018,  9,  1, _,  4),
+		(2018,  9, 17),
+		(2018,  9, 24),
+		(2018, 10,  8),
+		(2018, 11, 23),
+		(2018, 12, 22, _, 31),
+		(2019,  1,  1, _, 7),
+		(2019,  1, 14)
+	]
+	_holidays = []
+	for i in info:
+		if len(i) == 3:
+			_holidays.append(datetime.date(*i))
+		elif len(i) == 5 and i[3] == _:
+			assert i[2] < i[4]
+			_holidays += [datetime.date(i[0], i[1], i[2]+x)
+				for x in range(i[4]-i[2]+1)]
+	
 	return _holidays
 
 def main():
@@ -247,14 +252,6 @@ def proc(url, **kwargs):
 		else:
 			fs = PdfStore(url)
 		
-		head = datetime.date(fs.year, fs.month, 1)
-		
-		days = []
-		for i in range(31):
-			o = head + datetime.timedelta(days=i)
-			if o.year == head.year and o.month == head.month and o.weekday() < 5 and o not in holidays():
-				days.append(o)
-		
 		# hand-crafted yaml
 		if os.path.exists(fs.local("yml")):
 			menus = yaml.load(open(fs.local("yml")))
@@ -265,34 +262,77 @@ def proc(url, **kwargs):
 			for m in menus:
 				gmenus.update(set(m))
 		
-		assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
+		yaml_to_ics(fs.local("yml"), tm=tm)
+
+
+def yaml_to_ics(path, tm=None):
+	f = re.search(r"(\d{4})-(\d{2})-(.+).yml$", path)
+	assert f, path
+	year, month, grp = f.groups()
+	menus = yaml.load(open(path))
+	
+	head = datetime.date(int(year), int(month), 1)
+	
+	days = []
+	for i in range(31):
+		o = head + datetime.timedelta(days=i)
+		if o.year == head.year and o.month == head.month and o.weekday() < 5 and o not in holidays():
+			days.append(o)
+	
+	assert len(days) == len(menus), "days=%d menus=%d" % (len(days), len(menus))
+	
+	r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
+	for d,m in zip(days, menus):
+		ev = None
+		skip_set_props = False
+		for c in r.children:
+			if d == c["DTSTART"]:
+				ev = c
+				skip_set_props = True
 		
-		grp = fs.group
-		r = pical.parse(open("docs/%s.ics" % grp, "rb"))[0]
-		for d,m in zip(days, menus):
-			ev = None
-			for c in r.children:
-				if d == c["DTSTART"]:
-					ev = c
-			
-			if ev is None:
-				ev = pical.Component("VEVENT", r.tzdb)
-				r.children.append(ev)
-			
-			ev.properties = []
-			ev.properties.append(("UID", "%s@%s" % (d.isoformat(), grp), []))
-			ev.properties.append(("DTSTAMP", tm, []))
-			ev.properties.append(("DTSTART", d, [("VALUE",["DATE"])]))
-			ev.properties.append(("SUMMARY", ",".join(m), []))
-			ev.properties.append(("DESCRIPTION", "\n".join(m), []))
+		if ev is None:
+			ev = pical.Component("VEVENT", r.tzdb)
+			r.children.append(ev)
 		
-		with open("docs/%s.ics" % grp, "wb") as w:
-			for l in r.serialize():
-				w.write(l.encode("UTF-8"))
-				w.write("\r\n".encode("UTF-8"))
+		if tm is None:
+			tm = datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
+		
+		props = [
+			("UID", "%s@%s" % (d.isoformat(), grp), []),
+			("DTSTAMP", tm, []),
+			("DTSTART", d, [("VALUE",["DATE"])]),
+			("SUMMARY", ",".join(m), []),
+			("DESCRIPTION", "\n".join(m), []),
+		]
+		
+		if skip_set_props:
+			lut = {p[0]:p[1] for p in props}
+			if ev.get("SUMMARY") != lut["SUMMARY"]:
+				skip_set_props = False
+			if ev.get("DESCRIPTION") != lut["DESCRIPTION"]:
+				skip_set_props = False
+		
+		if not skip_set_props:
+			ev.properties = props
+	
+	with open("docs/%s.ics" % grp, "wb") as w:
+		for l in r.serialize():
+			w.write(l.encode("UTF-8"))
+			w.write("\r\n".encode("UTF-8"))
+
 
 if __name__ == "__main__":
+	ap = argparse.ArgumentParser()
+	ap.add_argument("yamls", nargs="*")
+	argv = ap.parse_args()
+	
 	logging.basicConfig(level=logging.DEBUG)
-	main()
+	if argv.yamls:
+		for f in argv.yamls:
+			print(f)
+			yaml_to_ics(f)
+	else:
+		main()
+	
 	for m in sorted(gmenus):
 		print(m)
