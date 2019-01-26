@@ -5,7 +5,7 @@
 layout: home
 ---
 
-[神戸市「献立表」のオープンデータ](http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/kondate_shiyousyokuhin.html)を iCalendar ファイルに変換しています。現在のところ献立のみ登録されています。
+[神戸市「献立表」のオープンデータ](http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/kondate_shiyousyokuhin.html)を iCalendar ファイルに変換しています。現在のところ献立のみ登録されています。献立のレシピのいくつかは[クックパッドの「神戸学校給食」](https://cookpad.com/search/%E7%A5%9E%E6%88%B8%E5%AD%A6%E6%A0%A1%E7%B5%A6%E9%A3%9F)で登録されています（[神戸市 教育委員会だより](http://www.city.kobe.lg.jp/child/education/information/) 平成31年1月発行）。
 
 第1地区
 
