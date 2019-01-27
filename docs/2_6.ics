@@ -2465,10 +2465,10 @@ DESCRIPTION:☆季節料理\nごはん\nシーフードカレー\n☆とうも�
 END:VEVENT
 BEGIN:VEVENT
 UID:2018-09-21@2_6
-DTSTAMP:20180719T005831
+DTSTAMP:20190127T012042
 DTSTART;VALUE=DATE:20180921
-SUMMARY:☆季節料理\,まぐろとひじきのにもの\,☆きゅうりのピリからいため\,月見だんご
-DESCRIPTION:☆季節料理\nまぐろとひじきのにもの\n☆きゅうりのピリからいため\n月見だんご
+SUMMARY:☆季節料理\,ごはん\,まぐろとひじきのにもの\,☆きゅうりのピリからいため\,月見だんご
+DESCRIPTION:☆季節料理\nごはん\nまぐろとひじきのにもの\n☆きゅうりのピリからいため\n月見だんご
 END:VEVENT
 BEGIN:VEVENT
 UID:2018-09-25@2_6
