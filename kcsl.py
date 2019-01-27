@@ -344,8 +344,7 @@ def ics_from_yaml(ics_path, tm=None):
 	print(sorted(yaml_src))
 	
 	for yaml_path in yaml_src:
-		if yaml_path.endswith("2017-01-8.yml"):
-			yaml_to_ics(yaml_path, ics_path, tm)
+		yaml_to_ics(yaml_path, ics_path, tm)
 
 
 if __name__ == "__main__":
