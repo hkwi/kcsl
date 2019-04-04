@@ -59,6 +59,8 @@ def holidays():
 		(2019,  1, 14),
 		(2019,  2, 11),
 		(2019,  3, 20, _, 31),
+		(2019,  4,  1, _, 11),
+		(2019,  4, 29, _, 30),
 	]
 	_holidays = []
 	for i in info:
@@ -268,8 +270,9 @@ def proc(url, **kwargs):
 			menus = yaml.load(open(fs.local("yml")))
 		else:
 			menus = auto_csv(url, g)
-			print(yaml.dump(menus, allow_unicode=True))
-			print(yaml.dump(menus, open(fs.local("yml"), "w"), allow_unicode=True))
+			opts = dict(allow_unicode=True, explicit_start=True, default_flow_style=None)
+			print(yaml.dump(menus, **opts))
+			print(yaml.dump(menus, open(fs.local("yml"), "w"), **opts))
 			for m in menus:
 				gmenus.update(set(m))
 		
