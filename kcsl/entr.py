@@ -1,4 +1,3 @@
-import argparse
 import csv
 import contextlib
 import datetime
@@ -17,6 +16,7 @@ from email.utils import parsedate
 from urllib.request import urlopen
 from urllib.parse import urlparse
 from rdflib.namespace import *
+from . import pdf_tool2
 
 NS1 = rdflib.Namespace("http://hkwi.github.io/kcsl/terms#")
 
@@ -64,6 +64,9 @@ def holidays():
 		(2019,  5,  1, _,  6),
 		(2019,  7, 15),
 		(2019,  7, 19, _, 31),
+		(2019,  9,  1, _, 2),
+		(2019,  9, 16),
+		(2019,  9, 23),
 	]
 	_holidays = []
 	for i in info:
@@ -184,7 +187,11 @@ def download(url, history=None):
 		if lm:
 			g.set((rdflib.URIRef(url), NS1["last-modified"], rdflib.Literal(lm)))
 
-def auto_csv(url, g, base=None):
+def auto_menu2(url, g, base=None):
+	fs = PdfStore(url, base)
+	return list(pdf_tool2.pdf_tok(fs.local("pdf")))
+
+def auto_menu(url, g, base=None):
 	fs = PdfStore(url, base)
 	if not os.path.exists(fs.local("csv")):
 		with open(fs.local("csv"), "w", encoding="UTF-8") as w:
@@ -272,7 +279,7 @@ def proc(url, **kwargs):
 		if os.path.exists(fs.local("yml")):
 			menus = yaml.load(open(fs.local("yml")))
 		else:
-			menus = auto_csv(url, g)
+			menus = auto_menu2(url, g)
 			opts = dict(allow_unicode=True, explicit_start=True, default_flow_style=None)
 			print(yaml.dump(menus, **opts))
 			print(yaml.dump(menus, open(fs.local("yml"), "w"), **opts))
@@ -354,19 +361,3 @@ def ics_from_yaml(ics_path, tm=None):
 	for yaml_path in yaml_src:
 		yaml_to_ics(yaml_path, ics_path, tm)
 
-
-if __name__ == "__main__":
-	ap = argparse.ArgumentParser()
-	ap.add_argument("icss", nargs="*")
-	argv = ap.parse_args()
-	
-	logging.basicConfig(level=logging.DEBUG)
-	if argv.icss:
-		# ics_from_yaml(ics_path, yaml_path, tm=None)
-		for ics in argv.icss:
-			ics_from_yaml(ics)
-	else:
-		main()
-	
-	for m in sorted(gmenus):
-		print(m)
