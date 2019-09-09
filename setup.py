@@ -7,5 +7,5 @@ setup(name='kcsl',
 	author='Hiroaki Kawai',
 	author_email='hiroaki.kawai@gmail.com',
 	url='https://github.com/hkwi/kcsl/',
-	py_modules=["kcsl"]
+	py_modules=find_packages(),
 )
