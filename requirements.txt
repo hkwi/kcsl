@@ -4,4 +4,4 @@ pical
 pyyaml
 git+https://github.com/hkwi/pdf-table-extract@py3
 requests
-camelot-py
+camelot-py[cv]
