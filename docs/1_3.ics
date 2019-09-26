@@ -3811,8 +3811,8 @@ BEGIN:VEVENT
 UID:2019-10-01@1_3
 DTSTAMP:20190920T104453
 DTSTART;VALUE=DATE:20191001
-SUMMARY:○新料理\,パン\,バター\,パンバター\,いかのリングあげ\,〇クスクスのスープ
-DESCRIPTION:○新料理\nパン\nバター\nパンバター\nいかのリングあげ\n〇クスクスのスープ
+SUMMARY:○新料理\,パン\,バター\,いかのリングあげ\,〇クスクスのスープ
+DESCRIPTION:○新料理\nパン\nバター\nいかのリングあげ\n〇クスクスのスープ
 END:VEVENT
 BEGIN:VEVENT
 UID:2019-10-02@1_3
@@ -3951,7 +3951,7 @@ BEGIN:VEVENT
 UID:2019-10-31@1_3
 DTSTAMP:20190920T104453
 DTSTART;VALUE=DATE:20191031
-SUMMARY:小型パン焼そば\,カリフラワーのあまずづけ\,ヨーグルト
-DESCRIPTION:小型パン焼そば\nカリフラワーのあまずづけ\nヨーグルト
+SUMMARY:小型パン\,焼そば\,カリフラワーのあまずづけ\,ヨーグルト
+DESCRIPTION:小型パン\n焼そば\nカリフラワーのあまずづけ\nヨーグルト
 END:VEVENT
 END:VCALENDAR
