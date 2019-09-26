@@ -67,6 +67,8 @@ def holidays():
 		(2019,  9,  1, _, 2),
 		(2019,  9, 16),
 		(2019,  9, 23),
+		(2019, 10, 14),
+		(2019, 10, 22),
 	]
 	_holidays = []
 	for i in info:
@@ -94,7 +96,7 @@ def main():
 	r.make_links_absolute()
 	for anchor in r.xpath('//*[@id="contents"]//a'):
 		href = anchor.get("href")
-		if re.search(r"/\d+[^/]+$", href): # 献立表に違いない
+		if re.search(r"/\d+\-[^/]+$", href): # 献立表に違いない
 			month_match = re.search("(\d+)月", list(anchor.xpath("preceding::h2/text()"))[-1])
 			if month_match:
 				month = month_match.group(1)
@@ -139,7 +141,7 @@ class PdfStore(object):
 		self.url = url
 		
 		m = re.match("(\d+)-(.*).pdf", os.path.basename(urlparse(url).path))
-		assert m
+		assert m, url
 		
 		month, self.group = m.groups()
 		self.month = int(month)

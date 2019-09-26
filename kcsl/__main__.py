@@ -8,6 +8,8 @@ if __name__ == "__main__":
 	argv = ap.parse_args()
 	
 	logging.basicConfig(level=logging.INFO)
+	sup = logging.getLogger("pdfminer")
+	sup.setLevel(logging.ERROR)
 	if argv.icss:
 		# ics_from_yaml(ics_path, yaml_path, tm=None)
 		for ics in argv.icss:

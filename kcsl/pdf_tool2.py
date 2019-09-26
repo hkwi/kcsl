@@ -64,6 +64,9 @@ def tok_by_knowledge2(t):
 		yield t
 
 def tok_by_knowledge(t):
+	if t == "パンバター":
+		yield "パン"
+		yield "バター"
 	if t == "ごはんぞうに田作り風":
 		yield t[:3]
 		yield t[3:6]
@@ -117,6 +120,24 @@ cell_tokenisers = [
 	remove_empty,
 ]
 
+def shrink(s):
+	rs = [
+		["〇新", "料理"],
+		["ごは", "ん（小）"],
+	]
+	for r in rs:
+		o = []
+		while len(s) >= len(r):
+			if s[:len(r)] == r:
+				o.append("".join(r))
+				s = s[len(r):]
+			else:
+				o.append(s[0])
+				s = s[1:]
+		s = o + s
+	
+	return s
+
 def cell_tok(cur, word):
 	if cur < len(cell_tokenisers):
 		for c in cell_tokenisers[cur](word):
@@ -131,18 +152,58 @@ def pdf_tok(filename):
 	# 実データ解析結果での行数は安定しなかったので、
 	# 行番号の抽出が必要
 	df = x[0].df
-	for k in range(df.shape[1]):
-		menu = df[df[k].str.contains(r'こんだて')]
-		if len(menu):
-			break
+	
+	def kondate_index():
+		for k in range(df.shape[1]):
+			menu = df[df[k].str.contains(r'こんだて')]
+			if len(menu) == 2:
+				return k, menu
+		return 0, None
+	
+	dt = df.T
+	o = [ k for k in range(dt.shape[1])
+		if len(dt[dt[k].str.contains(r'冷凍')]) > 2 ]
+	
+	k, menu = kondate_index()
+	assert len(menu)==2, "%s %s" % (filename, menu)
 	
 	ret = []
-	assert len(menu) == 2, "%s %s" % (filename, menu)
-	for i,r in menu.iterrows():
-		for j,c in r.items():
-			if j>k and len(c):
-				cs = [t for t in cell_tok(0, c)]
-				ret.append(cs)
+	crow = None
+	for i,r in df.iterrows():
+		if i in menu.index:
+			if crow:
+				ret += [c for c in crow if c]
+			crow = []
+		
+		if i in o:
+			if crow:
+				ret += [c for c in crow if c]
+			crow = None
+		
+		rseq = []
+		if crow is not None:
+			for j,c in r.items():
+				if j>k:
+					if len(c):
+						tok = [t for t in cell_tok(0, c)]
+					else:
+						tok = []
+					
+					tok = shrink(tok)
+					rseq.append(tok)
+		
+#		print("RSEQ", rseq)
+		
+		if crow:
+			assert len(crow)==len(rseq), repr([crow, rseq])
+			crow = [a+b for a,b in zip(crow, rseq)]
+		elif crow is not None:
+			crow = rseq
+		
+#		print("CROW", i, crow)
+	
+	if crow:
+		ret += [c for c in crow if c]
 #					yield (i, j, t)
 #					print(filename, i, j, t)
 	return ret
