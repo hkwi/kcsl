@@ -4,7 +4,7 @@ python:
 before_install:
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
   - sudo apt-get -qq update
-  - sudo apt-get install -y poppler-utils poppler-data
+  - sudo apt-get install -y poppler-utils poppler-data libgs9
 install:
   - pip install .
   - pip install -r requirements.txt
