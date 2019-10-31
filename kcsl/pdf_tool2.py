@@ -106,6 +106,9 @@ def tok_by_knowledge(t):
 	elif t == "小型パン焼そば":
 		yield t[:4]
 		yield t[4:]
+	elif t == "みそしるりんご":
+		yield t[:4]
+		yield t[4:]
 	else:
 		yield t
 
