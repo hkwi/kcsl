@@ -92,10 +92,11 @@ def get_days(year, month):
 	return days
 
 def main():
-	base = "http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/kondate_shiyousyokuhin.html"
+	#base = "http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/kondate_shiyousyokuhin.html"
+	base = "http://www.city.kobe.lg.jp/a54017/kosodate/gakko/school/lunch/kyusyoku/kondatehyo.html"
 	r = lxml.html.parse(base).getroot()
 	r.make_links_absolute()
-	for anchor in r.xpath('//*[@id="contents"]//a'):
+	for anchor in r.xpath('//*[@id="tmp_contents"]//a'):
 		href = anchor.get("href")
 		if re.search(r"/\d+\-[^/]+$", href): # 献立表に違いない
 			month_match = re.search("(\d+)月", list(anchor.xpath("preceding::h2/text()"))[-1])
