@@ -69,7 +69,8 @@ def holidays():
 		(2019,  9, 23),
 		(2019, 10, 14),
 		(2019, 10, 22),
-                (2019, 11,  4),
+		(2019, 11,  4),
+		(2019, 12, 25, _, 31),
 	]
 	_holidays = []
 	for i in info:
@@ -94,7 +95,8 @@ def get_days(year, month):
 def main():
 	#base = "http://www.city.kobe.lg.jp/child/school/lunch/kyusyoku/kondate_shiyousyokuhin.html"
 	base = "http://www.city.kobe.lg.jp/a54017/kosodate/gakko/school/lunch/kyusyoku/kondatehyo.html"
-	r = lxml.html.parse(base).getroot()
+	fp = urlopen(base)
+	r = lxml.html.parse(fp).getroot()
 	r.make_links_absolute()
 	for anchor in r.xpath('//*[@id="tmp_contents"]//a'):
 		href = anchor.get("href")
