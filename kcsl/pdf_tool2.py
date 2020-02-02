@@ -67,6 +67,9 @@ def tok_by_knowledge(t):
 	if t == "パンバター":
 		yield "パン"
 		yield "バター"
+	elif t == "パン八宝菜":
+		yield "パン"
+		yield "八宝菜"
 	elif t == "ごはんぞうに田作り風":
 		yield t[:3]
 		yield t[3:6]
