@@ -457,3 +457,21 @@
 <https://www.city.kobe.lg.jp/documents/5718/3-9.pdf> ns1:last-modified "Tue, 18 Feb 2020 03:15:04 GMT" ;
     ns1:mirror <http://hkwi.github.com/kcsl/data/2020-03-9.pdf> .
 
+<https://www.city.kobe.lg.jp/documents/5718/4-1_3.pdf> ns1:last-modified "Thu, 12 Mar 2020 12:00:03 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2020-04-1_3.pdf> .
+
+<https://www.city.kobe.lg.jp/documents/5718/4-2_6.pdf> ns1:last-modified "Thu, 12 Mar 2020 12:00:03 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2020-04-2_6.pdf> .
+
+<https://www.city.kobe.lg.jp/documents/5718/4-4.pdf> ns1:last-modified "Thu, 12 Mar 2020 12:00:03 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2020-04-4.pdf> .
+
+<https://www.city.kobe.lg.jp/documents/5718/4-5.pdf> ns1:last-modified "Thu, 12 Mar 2020 12:00:03 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2020-04-5.pdf> .
+
+<https://www.city.kobe.lg.jp/documents/5718/4-7.pdf> ns1:last-modified "Thu, 12 Mar 2020 12:00:03 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2020-04-7.pdf> .
+
+<https://www.city.kobe.lg.jp/documents/5718/4-8.pdf> ns1:last-modified "Thu, 12 Mar 2020 12:00:04 GMT" ;
+    ns1:mirror <http://hkwi.github.com/kcsl/data/2020-04-8.pdf> .
+
